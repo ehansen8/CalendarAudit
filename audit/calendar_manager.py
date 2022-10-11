@@ -1,11 +1,10 @@
-from dateutil.relativedelta import relativedelta
 from google.auth.transport.requests import Request
 from google.oauth2.credentials import Credentials
 from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
-from .models import *
+from .models import Calendar, User, WatchChannel
 from .event_builder import EventBuilder
-from .utils import *
+from datetime import datetime
 import uuid
 from googleapiclient.errors import HttpError
 
@@ -81,6 +80,9 @@ class CalendarManager:
         self._start_watch()
 
     def sync_events(self, full_sync=False):
+        """Sync local db with Calendar API
+        Incrementally saves events unless full_sync is set to true
+        or this is the first sync for the user"""
         cal = self.calendar
 
         if full_sync:
@@ -91,7 +93,7 @@ class CalendarManager:
             events = self._get_events()
 
         except HttpError as error:
-            #SyncToken is corrupted -> clear db and re-sync
+            # SyncToken is corrupted -> clear db and re-sync
             if error.status_code == 410:
                 self.sync_events(full_sync=True)
                 return
@@ -113,7 +115,7 @@ class CalendarManager:
                     singleEvents=True,
                     syncToken=cal.sync_token,
                     pageToken=page_token,
-                    fields=self.FIELDS
+                    fields=self.FIELDS,
                 )
                 .execute()
             )
@@ -156,30 +158,3 @@ class CalendarManager:
         }
         res = self.service.channels().stop(body=body).execute()
         return res
-
-    # Testing Only Methods
-    def __scan_events_in_range(self, months_behind, months_ahead):
-        """DEPRECATED: Gets all events in range and attempts to save them if they aren't in the db"""
-        tz = self.user.primary_calendar.timezone
-        this_month = DateUtil(tz=tz).this_month
-        max_range = this_month + relativedelta(months=months_ahead)
-        min_range = this_month - relativedelta(months=months_behind)
-        events = self.__get_events_by_range(min_range, max_range)
-        EventBuilder(self.user).save_events(events)
-
-    def __get_events_by_range(self, min_range, max_range) -> list[dict]:
-        """DEPRECATED: Return events from a range"""
-        events_result = (
-            self.service.events()
-            .list(
-                calendarId="primary",
-                timeMin=to_rfc(min_range),
-                timeMax=to_rfc(max_range),
-                maxResults=2500,
-                singleEvents=True,
-                orderBy="startTime",
-            )
-            .execute()
-        )
-
-        return events_result.get("items", [])

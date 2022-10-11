@@ -1,22 +1,9 @@
-from calendar import week
-from datetime import datetime, timezone, tzinfo
+from datetime import datetime
 import pytz
 
-
-def to_rfc(dt: datetime) -> str:
-    """Convert datetime to RFC 3339 compliant string"""
-
-    # Google API Doesn't like "+0000" utc offset, so convert to utc then remove tz info
-    try:
-        dt = dt.astimezone(pytz.utc)
-    except:
-        pass
-    dt = dt.replace(tzinfo=None)
-    formatted = dt.isoformat() + "Z"
-    return formatted
-
-
 def to_dt(time: str, tz: str, as_date=False) -> datetime:
+    """ Convert RFC 3339 datetime string to a timezone aware datetime
+    Can handle datetimes as well as only dates"""
     s = None
     if as_date:
         s = datetime.strptime(time, "%Y-%m-%d")
@@ -24,11 +11,6 @@ def to_dt(time: str, tz: str, as_date=False) -> datetime:
         s = datetime.strptime(time[:-6], "%Y-%m-%dT%H:%M:%S")
 
     return pytz.timezone(tz).localize(s)
-
-
-def get_start_of_month(time: datetime) -> datetime:
-    pass
-
 
 class DateUtil:
     """Date utility class primarily focused on getting the start of days/weeks/months
