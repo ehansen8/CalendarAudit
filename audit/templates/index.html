@@ -1,0 +1,83 @@
+{% extends 'base.html' %}
+{%block content%}
+{%load custom_filters %}
+<div class="container-fluid d-flex flex-column text-center p-2">
+    <h5 class="w-100 "> Time in Meetings Per Month</h5>
+    <div class="row d-flex flex-row space-apart pb-3">
+        {% for e in time_per_month%}
+        <div class="col">
+            <h6>{{e.month | month_name}}:</h6>
+            {{e.time | duration}}
+        </div>
+        {%endfor%}
+    </div>
+    <hr>
+
+    <h5 class="w-100 text-center"> Most and Least # of Meetings</h5>
+    <div class="row d-flex flex-row space-apart pb-3">
+        <div class="col">
+            <h6>Most Meetings:</h6> {{max_meetings.count}} meetings in
+            {{max_meetings.month | month_name}}
+        </div>
+        <div class="col">
+            <h6>Least Meetings:</h6> {{min_meetings.count}} meetings in
+            {{min_meetings.month | month_name}}
+        </div>
+    </div>
+    <hr>
+
+    <h5 class="w-100 text-center"> Busiest and Most Relaxing Weeks</h5>
+    <div class="row d-flex flex-row space-apart pb-3">
+        <div class="col">
+            <h6>Busiest Week:</h6>
+            The week of {{busy_week.week | week_date:busy_week.year }} had
+            {{busy_week.time|duration}} of meetings
+        </div>
+        <div class="col">
+            <h6>Least Busy Week:</h6>
+            The week of {{light_week.week | week_date:light_week.year }} had
+            {{light_week.time|duration}} of meetings
+        </div>
+    </div>
+    <hr>
+
+    <h5 class="w-100 text-center"> Avg. # of Meetings per Week</h5>
+    <div class="row d-flex flex-row space-apart pb-3">
+        <div class="col">
+            {{avg_meetings_week.avg | floatformat:1}} meetings/week
+        </div>
+    </div>
+    <hr>
+
+    <h5 class="w-100 text-center"> Avg. Time Spent in Meetings per Week</h5>
+    <div class="row d-flex flex-row space-apart pb-3">
+        <div class="col">
+            {{avg_time_meetings_week.avg | duration}} of meetings/week
+        </div>
+    </div>
+    <hr>
+
+    <h5 class="w-100 text-center">
+        Top {{ top_collaborators | length }} Collaborators
+    </h5>
+    <div class="row d-flex flex-row space-apart pb-3">
+        {% for person in top_collaborators %}
+        <div class="col">
+            <h6>{{person.email}}:</h6>
+            {{person.count}} Meetings
+        </div>
+        {% endfor %}
+    </div>
+    <hr>
+
+    <h5 class="w-100 text-center">
+        Time Spent Recruiting and Interviewing
+    </h5>
+    <div class="row d-flex flex-row space-apart pb-2">
+        <div class="col">
+            {{time_recruiting.time | duration}}
+        </div>
+    </div>
+
+</div>
+{%endblock content%}

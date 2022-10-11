@@ -1,0 +1,4 @@
+credentials.json
+config/secrets.py
+*.pyc
+db.sqlite3
