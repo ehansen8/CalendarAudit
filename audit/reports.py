@@ -1,13 +1,5 @@
-from ast import keyword
-from datetime import datetime
-import pytz
 from dateutil.relativedelta import relativedelta
-from google.auth.transport.requests import Request
-from google.oauth2.credentials import Credentials
-from google_auth_oauthlib.flow import InstalledAppFlow
-from googleapiclient.discovery import build
-from googleapiclient.errors import HttpError
-from .models import *
+from .models import User
 from django.db.models.functions import ExtractYear, ExtractMonth, ExtractWeek
 from django.db.models import Sum, Count, Avg, F, Q
 from .utils import DateUtil

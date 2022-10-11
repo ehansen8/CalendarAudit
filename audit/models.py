@@ -1,5 +1,3 @@
-from unittest.util import _MAX_LENGTH
-import black
 from django.db import models
 from datetime import datetime, timezone
 from django.contrib.auth.models import AbstractUser

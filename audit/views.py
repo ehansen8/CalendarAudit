@@ -1,11 +1,11 @@
-from ast import Num
 from django.shortcuts import redirect, render
 from django.http.request import HttpRequest
 from django.http.response import HttpResponse
 from .calendar_manager import CalendarManager
-from .reports import *
+from .reports import ReportBuilder
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
+from .models import User
 
 
 @login_required

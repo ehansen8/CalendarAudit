@@ -1,6 +1,6 @@
 import audit.utils as utils
 from .models import Calendar, Event, Attendee, User
-from django.db import connection, transaction
+from django.db import transaction
 
 
 class EventBuilder:
